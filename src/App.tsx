@@ -1,6 +1,9 @@
-import { useState, useRef, ChangeEvent, KeyboardEvent } from "react";
+import { useState, useRef, ChangeEvent, KeyboardEvent, useEffect} from "react";
+
 
 function App() {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const [text, setText] = useState<string>("");
   const [keyCount, setKeyCount] = useState<number>(0);
   const [backspaceCount, setBackspaceCount] = useState<number>(0);
@@ -14,6 +17,11 @@ function App() {
   const hasStarted = useRef<boolean>(false);
 
   // --- Handlers ---
+
+  useEffect(() => {
+  textareaRef.current?.focus();
+}, []);
+
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -60,7 +68,7 @@ function App() {
     const time = getTimeElapsed();
 
     if (pasteCount > 0) score -= 40;
-    if (backspaceCount === 0 && text.length > 20) score -= 15;
+    if (backspaceCount === 0 && text.length > 35) score -= 15;
 
     const speed = time > 0 ? text.length / (time / 60) : 0;
     if (speed > 200) score -= 15;
@@ -151,6 +159,7 @@ function App() {
 
       {/* Textarea */}
       <textarea
+        ref={textareaRef}
         rows={15}
         placeholder="Start typing your notes..."
         value={text}
@@ -171,7 +180,7 @@ function App() {
 
         {isPasted && (
           <p style={{ color: "red", fontWeight: "bold" }}>
-            Pasted content detected!
+             Pasted content detected!
           </p>
         )}
 
